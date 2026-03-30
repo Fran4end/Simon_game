@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simon_game</string>
+    <string name="sequence">Qua verrà visualizzata la seguenza</string>
+    <string name="delete">Elimina</string>
+    <string name="end_game">Fine partita</string>
+</resources>

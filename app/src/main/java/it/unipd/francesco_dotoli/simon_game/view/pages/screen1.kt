@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import it.unipd.francesco_dotoli.simon_game.*
 import it.unipd.francesco_dotoli.simon_game.R
+import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
 import it.unipd.francesco_dotoli.simon_game.view.components.colored_button
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
 import kotlinx.coroutines.delay
@@ -73,6 +75,11 @@ fun Screen1(){
                 .padding(defaultPadding)
                 .height(75.dp)
                 .verticalScroll(scrollState),
+        )
+
+        FunctionButtons(
+            onDelete = {text = sequence},
+            onEndGame = {}
         )
     }
 }
