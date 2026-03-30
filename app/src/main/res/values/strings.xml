@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Simon_game</string>
+    <string name="sequence">Here is displayed the sequence</string>
+</resources>
