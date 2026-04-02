@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpace
+import it.unipd.francesco_dotoli.simon_game.colorsList
 import it.unipd.francesco_dotoli.simon_game.defaultPadding
 
 @Composable
@@ -21,18 +22,18 @@ fun colored_button( buttonColor : Color, onclick : () -> Unit){
         onClick = onclick,
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
-        modifier = Modifier.fillMaxWidth().wrapContentHeight().aspectRatio(4f/3f),
+        modifier = Modifier.aspectRatio(4f/3f),
     ){}
 }
 
 fun getLetterFromColor(color : Color) : String{
   return when(color){
-        Color(0xfff02626) -> "R"
-        Color(0xFF0CB808) -> "G"
-        Color(0xFF2196F3) -> "B"
-        Color(0xFFE758D8) -> "M"
-        Color(0xfff0c23a) -> "Y"
-        Color(0xFF00BCD4) -> "C"
-        else -> "N/A"
+      colorsList[0] -> "R"
+      colorsList[1] -> "G"
+      colorsList[2] -> "B"
+      colorsList[3] -> "M"
+      colorsList[4] -> "Y"
+      colorsList[5] -> "C"
+      else -> "N/A"
     }
 }

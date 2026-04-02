@@ -1,17 +1,15 @@
 package it.unipd.francesco_dotoli.simon_game.view.pages
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.hoverable
+import android.content.res.Configuration
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
@@ -19,55 +17,115 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import it.unipd.francesco_dotoli.simon_game.*
 import it.unipd.francesco_dotoli.simon_game.R
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
 import it.unipd.francesco_dotoli.simon_game.view.components.colored_button
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
-import kotlinx.coroutines.delay
 
 @Composable
-fun Screen1(){
+fun Screen1() {
     val sequence = stringResource(R.string.sequence)
-    var text by remember { mutableStateOf(sequence) }
+    val gridModifier = Modifier.fillMaxSize().padding(defaultPadding)
+    var text by rememberSaveable { mutableStateOf(sequence) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceAround,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    val coloredButtonOnClick = fun (color: Color){
+        var newText = getLetterFromColor(color)
+        if (text == sequence) text = ""
+        else newText = ", $newText"
+        text += newText
+    }
+    val onDelete = {text = sequence}
+
+    //preso spunto da: https://medium.com/@paritasampa95/auto-scrolling-text-in-jetpack-compose-smooth-horizontal-marquee-for-android-60b20f1e8198
+    val scrollState = rememberScrollState()
+    LaunchedEffect(text) {
+        scrollState.animateScrollTo(scrollState.maxValue)
+    }
+
+    val orientation = LocalConfiguration.current
+
+    when(orientation.orientation){
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            Row(
+                modifier = gridModifier.padding(start = defaultPadding * 2),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                LandscapeGrid(coloredButtonOnClick)
+                FunctionsArea(
+                    onDelete = onDelete,
+                    onEndGame = {},
+                    scrollState = scrollState,
+                    text = text,
+                )
+            }
+        }
+        else ->
+            Column(
+                modifier = gridModifier,
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                PortraitGrid(coloredButtonOnClick)
+                FunctionsArea(
+                    onDelete = onDelete,
+                    onEndGame = {},
+                    scrollState = scrollState,
+                    text = text,
+                )
+            }
+    }
+}
+
+@Composable
+private fun PortraitGrid(onClick : (color: Color) -> Unit){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(defaultPadding / 2),
+        verticalArrangement = Arrangement.spacedBy(defaultPadding / 2),
+        userScrollEnabled = false,
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(defaultPadding/2),
-            verticalArrangement = Arrangement.spacedBy(defaultPadding),
-            userScrollEnabled = false,
-            modifier = Modifier.padding(horizontal = defaultPadding)
-        ) {
-          items(colorsList){
-              color ->
-              colored_button(
-                  buttonColor = color,
-                  onclick = {
-                      var newText = getLetterFromColor(color)
-                      if (text.equals(sequence)) text = ""
-                      else newText = ", $newText"
-                      text += newText
-                  }
-              )
-          }
+        items(colorsList) { color ->
+            colored_button(
+                buttonColor = color,
+                onclick = {onClick(color)}
+            )
         }
+    }
+}
 
-        //preso spunto da: https://medium.com/@paritasampa95/auto-scrolling-text-in-jetpack-compose-smooth-horizontal-marquee-for-android-60b20f1e8198
-        val scrollState = rememberScrollState()
-        LaunchedEffect(text) {
-            scrollState.animateScrollTo(scrollState.maxValue)
+@Composable
+private fun LandscapeGrid(onClick : (color: Color) -> Unit){
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(3),
+        horizontalArrangement = Arrangement.spacedBy(defaultPadding / 2),
+        verticalArrangement = Arrangement.spacedBy(defaultPadding / 2),
+        userScrollEnabled = false,
+    ) {
+        items(colorsList) { color ->
+            colored_button(
+                buttonColor = color,
+                onclick = {onClick(color)}
+            )
         }
+    }
+
+}
+
+@Composable
+private fun FunctionsArea(onDelete: () -> Unit, onEndGame: () -> Unit, scrollState : ScrollState, text : String){
+    Column (
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ){
 
         Text(
             text = text,
@@ -78,8 +136,8 @@ fun Screen1(){
         )
 
         FunctionButtons(
-            onDelete = {text = sequence},
-            onEndGame = {}
+            onDelete = onDelete,
+            onEndGame = onEndGame,
         )
     }
 }
