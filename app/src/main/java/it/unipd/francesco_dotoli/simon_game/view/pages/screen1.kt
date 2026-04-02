@@ -24,25 +24,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import it.unipd.francesco_dotoli.simon_game.*
 import it.unipd.francesco_dotoli.simon_game.R
+import it.unipd.francesco_dotoli.simon_game.view.components.Colored_button
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
-import it.unipd.francesco_dotoli.simon_game.view.components.colored_button
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
 
 @Composable
-fun Screen1() {
+fun Screen1(onEndGame: () -> Unit) {
     val sequence = stringResource(R.string.sequence)
     val gridModifier = Modifier.fillMaxSize().padding(defaultPadding)
     var text by rememberSaveable { mutableStateOf(sequence) }
 
-    val coloredButtonOnClick = fun (color: Color){
+    val coloredButtonOnClick = fun(color: Color) {
         var newText = getLetterFromColor(color)
         if (text == sequence) text = ""
         else newText = ", $newText"
         text += newText
     }
-    val onDelete = {text = sequence}
+    val onDelete = { text = sequence }
 
     //preso spunto da: https://medium.com/@paritasampa95/auto-scrolling-text-in-jetpack-compose-smooth-horizontal-marquee-for-android-60b20f1e8198
     val scrollState = rememberScrollState()
@@ -52,23 +53,21 @@ fun Screen1() {
 
     val orientation = LocalConfiguration.current
 
-    when(orientation.orientation){
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            Row(
-                modifier = gridModifier.padding(start = defaultPadding * 2),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                LandscapeGrid(coloredButtonOnClick)
-                FunctionsArea(
-                    onDelete = onDelete,
-                    onEndGame = {},
-                    scrollState = scrollState,
-                    text = text,
-                )
-            }
+    if (orientation.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        Row(
+            modifier = gridModifier.padding(start = defaultPadding * 2),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            LandscapeGrid(coloredButtonOnClick)
+            FunctionsArea(
+                onDelete = onDelete,
+                onEndGame = onEndGame,
+                scrollState = scrollState,
+                text = text,
+            )
         }
-        else ->
+    else
             Column(
                 modifier = gridModifier,
                 verticalArrangement = Arrangement.SpaceEvenly,
@@ -77,12 +76,11 @@ fun Screen1() {
                 PortraitGrid(coloredButtonOnClick)
                 FunctionsArea(
                     onDelete = onDelete,
-                    onEndGame = {},
+                    onEndGame = onEndGame,
                     scrollState = scrollState,
                     text = text,
                 )
             }
-    }
 }
 
 @Composable
@@ -94,7 +92,7 @@ private fun PortraitGrid(onClick : (color: Color) -> Unit){
         userScrollEnabled = false,
     ) {
         items(colorsList) { color ->
-            colored_button(
+            Colored_button(
                 buttonColor = color,
                 onclick = {onClick(color)}
             )
@@ -111,7 +109,7 @@ private fun LandscapeGrid(onClick : (color: Color) -> Unit){
         userScrollEnabled = false,
     ) {
         items(colorsList) { color ->
-            colored_button(
+            Colored_button(
                 buttonColor = color,
                 onclick = {onClick(color)}
             )

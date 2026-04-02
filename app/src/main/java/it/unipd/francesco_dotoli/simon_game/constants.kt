@@ -1,7 +1,12 @@
 package it.unipd.francesco_dotoli.simon_game
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 
 val defaultPadding = 16.dp
 

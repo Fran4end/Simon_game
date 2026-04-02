@@ -1,23 +1,16 @@
 package it.unipd.francesco_dotoli.simon_game.view.components
 
-import android.R
-import android.widget.Button
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.ColorSpace
+import androidx.compose.ui.graphics.RectangleShape
 import it.unipd.francesco_dotoli.simon_game.colorsList
-import it.unipd.francesco_dotoli.simon_game.defaultPadding
 
 @Composable
-fun colored_button( buttonColor : Color, onclick : () -> Unit){
+fun Colored_button( buttonColor : Color, onclick : () -> Unit){
     Button(
         onClick = onclick,
         shape = RectangleShape,

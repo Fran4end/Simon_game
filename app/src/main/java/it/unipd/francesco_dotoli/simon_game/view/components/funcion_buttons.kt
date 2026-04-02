@@ -41,7 +41,7 @@ fun FunctionButtons(onDelete : () -> Unit, onEndGame : () -> Unit){
         }
 
         Button(
-            onClick = { },
+            onClick = onEndGame,
             enabled = true,
         ) {
             Text(
