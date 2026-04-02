@@ -27,12 +27,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import it.unipd.francesco_dotoli.simon_game.*
 import it.unipd.francesco_dotoli.simon_game.R
+import it.unipd.francesco_dotoli.simon_game.model.GameModel
+import it.unipd.francesco_dotoli.simon_game.model.finishedGames
+import it.unipd.francesco_dotoli.simon_game.view.Routes
 import it.unipd.francesco_dotoli.simon_game.view.components.Colored_button
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
 
 @Composable
-fun Screen1(onEndGame: () -> Unit) {
+fun Screen1(navController: NavController) {
     val sequence = stringResource(R.string.sequence)
     val gridModifier = Modifier.fillMaxSize().padding(defaultPadding)
     var text by rememberSaveable { mutableStateOf(sequence) }
@@ -44,6 +47,19 @@ fun Screen1(onEndGame: () -> Unit) {
         text += newText
     }
     val onDelete = { text = sequence }
+    val onEndGame = {
+        if (text != sequence) {
+            finishedGames.add(
+                GameModel(
+                    buttons_clicked = text.split(',').size,
+                    seguence = text,
+                )
+            )
+            text = sequence
+        }
+        navController.navigate(Routes.Screen2.route)
+    }
+
 
     //preso spunto da: https://medium.com/@paritasampa95/auto-scrolling-text-in-jetpack-compose-smooth-horizontal-marquee-for-android-60b20f1e8198
     val scrollState = rememberScrollState()
@@ -53,7 +69,7 @@ fun Screen1(onEndGame: () -> Unit) {
 
     val orientation = LocalConfiguration.current
 
-    if (orientation.orientation == Configuration.ORIENTATION_LANDSCAPE)
+    if (orientation.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         Row(
             modifier = gridModifier.padding(start = defaultPadding * 2),
             verticalAlignment = Alignment.CenterVertically,
@@ -67,20 +83,22 @@ fun Screen1(onEndGame: () -> Unit) {
                 text = text,
             )
         }
-    else
-            Column(
-                modifier = gridModifier,
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                PortraitGrid(coloredButtonOnClick)
-                FunctionsArea(
-                    onDelete = onDelete,
-                    onEndGame = onEndGame,
-                    scrollState = scrollState,
-                    text = text,
-                )
-            }
+    }
+    else {
+        Column(
+            modifier = gridModifier,
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            PortraitGrid(coloredButtonOnClick)
+            FunctionsArea(
+                onDelete = onDelete,
+                onEndGame = onEndGame,
+                scrollState = scrollState,
+                text = text,
+            )
+        }
+    }
 }
 
 @Composable

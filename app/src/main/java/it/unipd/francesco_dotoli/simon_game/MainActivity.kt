@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import it.unipd.francesco_dotoli.simon_game.ui.theme.Simon_gameTheme
+import it.unipd.francesco_dotoli.simon_game.view.Routes
 import it.unipd.francesco_dotoli.simon_game.view.pages.Screen2
 import it.unipd.francesco_dotoli.simon_game.view.pages.Screen1
 
@@ -30,10 +31,10 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
-                        startDestination = "screen1",
+                        startDestination = Routes.Screen1.route,
                     ) {
-                        composable("screen1") {Screen1(onEndGame = {navController.navigate("screen2")})}
-                        composable("screen2") {Screen2(onClick = {navController.popBackStack()})}
+                        composable(Routes.Screen1.route) {Screen1(navController)}
+                        composable(Routes.Screen2.route) {Screen2(navController)}
                     }
                 }
             }
