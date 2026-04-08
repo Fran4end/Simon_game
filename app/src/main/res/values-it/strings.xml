@@ -4,4 +4,5 @@
     <string name="sequence">Qua verrà visualizzata la seguenza</string>
     <string name="delete">Elimina</string>
     <string name="end_game">Fine partita</string>
+    <string name="ongoing">Il gioco è in corso</string>>
 </resources>
