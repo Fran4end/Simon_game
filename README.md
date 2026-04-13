@@ -44,4 +44,4 @@ I have tested the app on physical device samsung S25 with android 16 (Api level 
 
 ## Develop information
 
-I used official android documentation especially [Compose components](https://kotlinlang.org/api/compose-multiplatform/material3/androidx.compose.material3/) documentation site and [list/grid](https://developer.android.com/develop/ui/compose/lists) ui documentation. In addition i used some youtube video ([Navigation](https://www.youtube.com/watch?v=4gUeyNkGE3g&t=931s), [Nested scrolling]("https://www.youtube.com/watch?v=Y547UHx5Rc0"))
+I used official android documentation especially [Compose components](https://kotlinlang.org/api/compose-multiplatform/material3/androidx.compose.material3/) documentation site and [list/grid](https://developer.android.com/develop/ui/compose/lists) ui documentation. In addition i used some youtube video ([Navigation](https://www.youtube.com/watch?v=4gUeyNkGE3g&t=931s), [Nested scrolling](https://www.youtube.com/watch?v=Y547UHx5Rc0))
