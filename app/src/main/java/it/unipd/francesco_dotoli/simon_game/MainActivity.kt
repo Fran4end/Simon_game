@@ -35,8 +35,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
                         startDestination = Routes.Screen1.route,
-                        enterTransition = { fadeIn(animationSpec = tween(100)) },
-                        exitTransition = { fadeOut(animationSpec = tween(100)) },
+                        enterTransition = { fadeIn(animationSpec = tween(100)) }, // speed up animation time
+                        exitTransition = { fadeOut(animationSpec = tween(100)) }, // speed up animation time
                     ) {
                         composable(Routes.Screen1.route) {Screen1(navController)}
                         composable(Routes.Screen2.route) {Screen2(navController)}

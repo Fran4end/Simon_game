@@ -136,6 +136,7 @@ private fun LandscapeGrid(onClick : (color: Color) -> Unit){
 
 }
 
+//Text box and the 2 buttons under or right of grid
 @Composable
 private fun FunctionsArea(onDelete: () -> Unit, onEndGame: () -> Unit, scrollState : ScrollState, text : String){
     Column (
