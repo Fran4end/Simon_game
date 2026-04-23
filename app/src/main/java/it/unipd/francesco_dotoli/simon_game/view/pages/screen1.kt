@@ -37,7 +37,6 @@ import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
 @Composable
 fun Screen1(navController: NavController) {
     val sequence = stringResource(R.string.sequence)
-    val ongoing = stringResource(R.string.ongoing)
     val gridModifier = Modifier.fillMaxSize().padding(defaultPadding)
     var text by rememberSaveable { mutableStateOf(sequence) }
 
@@ -51,11 +50,10 @@ fun Screen1(navController: NavController) {
     val onEndGame = {
         var size = text.split(',').size
         if (text == sequence) size = 0
-        if (finishedGames.isNotEmpty() && finishedGames.last().buttons_clicked == 0) finishedGames.removeAt(finishedGames.lastIndex)
         finishedGames.add(
             GameModel(
                 buttons_clicked = size,
-                seguence = if(text == sequence) ongoing else text,
+                seguence = if(text == sequence) "" else text,
                 )
         )
         text = sequence
