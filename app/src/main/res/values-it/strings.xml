@@ -4,4 +4,8 @@
     <string name="sequence">Qua verrà visualizzata la seguenza</string>
     <string name="delete">Elimina</string>
     <string name="end_game">Fine partita</string>
+    <string name="game_list_title">Lista delle partite</string>
+    <string name="delete_all_entries">Cancella tutto</string>
+    <string name="start_new_game">Gioca</string>
+    <string name="game_title">Gioco di Simon</string>
 </resources>

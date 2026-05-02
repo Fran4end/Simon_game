@@ -1,9 +1,13 @@
 package it.unipd.francesco_dotoli.simon_game.model
 
-data class GameModel(
-    val buttonsClicked: Int = 0,
-    val correctSequence: String = "",
-    val missSequence: String = "",
-)
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-val finishedGames: MutableList<GameModel> = mutableListOf()
+@Entity
+data class GameModel(
+    @PrimaryKey(autoGenerate = true) val uid: Int,
+    @ColumnInfo(name = "buttons_clicked") val buttonsClicked: Int = 0,
+    @ColumnInfo(name = "correct_sequence") val correctSequence: String = "",
+    @ColumnInfo(name = "miss_sequence") val missSequence: String = "",
+)

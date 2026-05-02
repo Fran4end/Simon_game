@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "it.unipd.francesco_dotoli.simon_game"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -41,6 +42,8 @@ android {
 
 dependencies {
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.compose.runtime.livedata)
+    ksp(libs.androidx.room.compiler)
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
     // optional - RxJava3 support for Room

@@ -14,6 +14,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,19 +30,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import it.unipd.francesco_dotoli.simon_game.R
 import it.unipd.francesco_dotoli.simon_game.colorsList
+import it.unipd.francesco_dotoli.simon_game.controller.RoomViewModel
 import it.unipd.francesco_dotoli.simon_game.defaultPadding
 import it.unipd.francesco_dotoli.simon_game.model.GameModel
-import it.unipd.francesco_dotoli.simon_game.model.finishedGames
-import it.unipd.francesco_dotoli.simon_game.view.Routes
 import it.unipd.francesco_dotoli.simon_game.view.components.ColoredButton
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen1(navController: NavController) {
+fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
     val sequence = stringResource(R.string.sequence)
     val gridModifier = Modifier
         .fillMaxSize()
@@ -56,14 +60,15 @@ fun Screen1(navController: NavController) {
     val onEndGame = {
         var size = text.split(',').size
         if (text == sequence) size = 0
-        finishedGames.add(
+        roomViewModel.insert(
             GameModel(
                 buttonsClicked = size,
                 correctSequence = if (text == sequence) "" else text,
+                uid = 0,
             )
         )
+        navController.popBackStack()
         text = sequence
-        navController.navigate(Routes.Screen2.route)
     }
 
 
@@ -74,34 +79,43 @@ fun Screen1(navController: NavController) {
     }
 
     val orientation = LocalConfiguration.current
-
-    if (orientation.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        Row(
-            modifier = gridModifier.padding(start = defaultPadding * 2),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            LandscapeGrid(coloredButtonOnClick)
-            FunctionsArea(
-                onDelete = onDelete,
-                onEndGame = onEndGame,
-                scrollState = scrollState,
-                text = text,
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.game_title), fontSize = 32.sp) },
             )
         }
-    } else {
-        Column(
-            modifier = gridModifier,
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            PortraitGrid(coloredButtonOnClick)
-            FunctionsArea(
-                onDelete = onDelete,
-                onEndGame = onEndGame,
-                scrollState = scrollState,
-                text = text,
-            )
+    ) { innerPadding ->
+        if (orientation.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Row(
+                modifier = gridModifier
+                    .padding(innerPadding)
+                    .padding(start = defaultPadding * 2),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                LandscapeGrid(coloredButtonOnClick)
+                FunctionsArea(
+                    onDelete = onDelete,
+                    onEndGame = onEndGame,
+                    scrollState = scrollState,
+                    text = text,
+                )
+            }
+        } else {
+            Column(
+                modifier = gridModifier.padding(innerPadding),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                PortraitGrid(coloredButtonOnClick)
+                FunctionsArea(
+                    onDelete = onDelete,
+                    onEndGame = onEndGame,
+                    scrollState = scrollState,
+                    text = text,
+                )
+            }
         }
     }
 }

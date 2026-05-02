@@ -5,6 +5,6 @@ package it.unipd.francesco_dotoli.simon_game.view
  * [Sealed Classes](https://kotlinlang.org/docs/sealed-classes.html)
  */
 sealed class Routes(val route: String) {
-    data object Screen1 : Routes("screen1")
-    data object Screen2 : Routes("screen2")
+    data object GamePage : Routes("GamePage")
+    data object GameListPage : Routes("GameListPage")
 }
