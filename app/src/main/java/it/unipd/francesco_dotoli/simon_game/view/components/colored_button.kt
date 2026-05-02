@@ -10,23 +10,23 @@ import androidx.compose.ui.graphics.RectangleShape
 import it.unipd.francesco_dotoli.simon_game.colorsList
 
 @Composable
-fun Colored_button( buttonColor : Color, onclick : () -> Unit){
+fun ColoredButton(buttonColor: Color, onClick: () -> Unit) {
     Button(
-        onClick = onclick,
+        onClick = onClick,
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
-        modifier = Modifier.aspectRatio(4f/3f),
-    ){}
+        modifier = Modifier.aspectRatio(4f / 3f),
+    ) {}
 }
 
-fun getLetterFromColor(color : Color) : String{
-  return when(color){
-      colorsList[0] -> "R"
-      colorsList[1] -> "G"
-      colorsList[2] -> "B"
-      colorsList[3] -> "M"
-      colorsList[4] -> "Y"
-      colorsList[5] -> "C"
-      else -> "N/A"
+fun getLetterFromColor(color: Color): String {
+    return when (color) {
+        colorsList[0] -> "R"
+        colorsList[1] -> "G"
+        colorsList[2] -> "B"
+        colorsList[3] -> "M"
+        colorsList[4] -> "Y"
+        colorsList[5] -> "C"
+        else -> "N/A"
     }
 }

@@ -1,8 +1,9 @@
 package it.unipd.francesco_dotoli.simon_game.model
 
 data class GameModel(
-    val buttons_clicked : Int = 0,
-    val seguence : String = ""
-){}
+    val buttonsClicked: Int = 0,
+    val correctSequence: String = "",
+    val missSequence: String = "",
+)
 
-val finishedGames : MutableList<GameModel> = mutableListOf<GameModel>()
+val finishedGames: MutableList<GameModel> = mutableListOf()
