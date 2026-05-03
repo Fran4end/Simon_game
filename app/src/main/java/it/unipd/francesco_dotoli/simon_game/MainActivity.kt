@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
         val roomDao = AppDatabase.getDatabase(applicationContext).roomDao()
         val roomRepository = RoomRepository(roomDao)
-        var roomViewModel = RoomViewModel(roomRepository)
+        val roomViewModel = RoomViewModel(roomRepository)
 
         enableEdgeToEdge()
         setContent {

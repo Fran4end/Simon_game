@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,6 +41,9 @@ import it.unipd.francesco_dotoli.simon_game.model.GameModel
 import it.unipd.francesco_dotoli.simon_game.view.components.ColoredButton
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
+import it.unipd.francesco_dotoli.simon_game.view.components.playSound
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,8 +53,15 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
         .fillMaxSize()
         .padding(defaultPadding)
     var text by rememberSaveable { mutableStateOf(sequence) }
+    var isPlaying by rememberSaveable { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     val coloredButtonOnClick = fun(color: Color) {
+        isPlaying = true
+        coroutineScope.launch(Dispatchers.IO) {
+            playSound(color)
+            isPlaying = false
+        }
         var newText = getLetterFromColor(color)
         if (text == sequence) text = ""
         else newText = ", $newText"
