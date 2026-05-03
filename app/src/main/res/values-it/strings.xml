@@ -8,4 +8,7 @@
     <string name="delete_all_entries">Cancella tutto</string>
     <string name="start_new_game">Gioca</string>
     <string name="game_title">Gioco di Simon</string>
+    <string name="start">Avvia partita</string>
+    <string name="pause">Pausa</string>
+    <string name="resume">Riprendi</string>
 </resources>

@@ -1,4 +1,4 @@
-package it.unipd.francesco_dotoli.simon_game.view.components
+package it.unipd.francesco_dotoli.simon_game.controller
 
 import android.media.AudioAttributes
 import android.media.AudioFormat

@@ -10,11 +10,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import it.unipd.francesco_dotoli.simon_game.colorsList
 
 @Composable
-fun ColoredButton(buttonColor: Color, onClick: () -> Unit) {
+fun ColoredButton(buttonColor: Color, isHighlighted: Boolean = false, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         shape = RectangleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isHighlighted) buttonColor else buttonColor.copy(alpha = 0.5f)
+        ),
         modifier = Modifier.aspectRatio(4f / 3f),
     ) {}
 }

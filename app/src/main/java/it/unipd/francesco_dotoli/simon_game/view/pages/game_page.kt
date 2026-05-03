@@ -32,58 +32,73 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import it.unipd.francesco_dotoli.simon_game.R
 import it.unipd.francesco_dotoli.simon_game.colorsList
+import it.unipd.francesco_dotoli.simon_game.controller.GameController
 import it.unipd.francesco_dotoli.simon_game.controller.RoomViewModel
+import it.unipd.francesco_dotoli.simon_game.controller.playSound
 import it.unipd.francesco_dotoli.simon_game.defaultPadding
 import it.unipd.francesco_dotoli.simon_game.model.GameModel
 import it.unipd.francesco_dotoli.simon_game.view.components.ColoredButton
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
 import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
-import it.unipd.francesco_dotoli.simon_game.view.components.playSound
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
-    val sequence = stringResource(R.string.sequence)
+    val sequencePlaceholder = stringResource(R.string.sequence)
     val gridModifier = Modifier
         .fillMaxSize()
         .padding(defaultPadding)
-    var text by rememberSaveable { mutableStateOf(sequence) }
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
+
+    val gameController: GameController = viewModel()
     val coroutineScope = rememberCoroutineScope()
+    var text by rememberSaveable { mutableStateOf(sequencePlaceholder) }
 
     val coloredButtonOnClick = fun(color: Color) {
-        isPlaying = true
+        if (gameController.isBotPlaying || !gameController.isGameStart) return
+        gameController.highlightedColor = color
         coroutineScope.launch(Dispatchers.IO) {
             playSound(color)
-            isPlaying = false
+            delay(300)
+            gameController.highlightedColor = null
         }
         var newText = getLetterFromColor(color)
-        if (text == sequence) text = ""
+        if (text == sequencePlaceholder) text = ""
         else newText = ", $newText"
         text += newText
     }
-    val onDelete = { text = sequence }
+
     val onEndGame = {
         var size = text.split(',').size
-        if (text == sequence) size = 0
+        if (text == sequencePlaceholder) size = 0
         roomViewModel.insert(
             GameModel(
                 buttonsClicked = size,
-                correctSequence = if (text == sequence) "" else text,
+                correctSequence = if (text == sequencePlaceholder) "" else text,
                 uid = 0,
             )
         )
         navController.popBackStack()
-        text = sequence
+        text = sequencePlaceholder
+        gameController.reset()
     }
 
+    val onStart = {
+        gameController.playSequence()
+        gameController.isGameStart = true
+    }
 
-    //preso spunto da: https://medium.com/@paritasampa95/auto-scrolling-text-in-jetpack-compose-smooth-horizontal-marquee-for-android-60b20f1e8198
+    val onPause = {
+        gameController.isOnPause = !gameController.isOnPause
+    }
+
+    // scroll text
     val scrollState = rememberScrollState()
     LaunchedEffect(text) {
         scrollState.animateScrollTo(scrollState.maxValue)
@@ -105,12 +120,15 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                LandscapeGrid(coloredButtonOnClick)
+                LandscapeGrid(coloredButtonOnClick, gameController.highlightedColor)
                 FunctionsArea(
-                    onDelete = onDelete,
+                    onPause = onPause,
                     onEndGame = onEndGame,
                     scrollState = scrollState,
                     text = text,
+                    onStart = onStart,
+                    isOnPause = gameController.isOnPause,
+                    isGameStart = gameController.isGameStart,
                 )
             }
         } else {
@@ -119,12 +137,15 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                PortraitGrid(coloredButtonOnClick)
+                PortraitGrid(coloredButtonOnClick, gameController.highlightedColor)
                 FunctionsArea(
-                    onDelete = onDelete,
+                    onPause = onPause,
                     onEndGame = onEndGame,
                     scrollState = scrollState,
                     text = text,
+                    onStart = onStart,
+                    isOnPause = gameController.isOnPause,
+                    isGameStart = gameController.isGameStart,
                 )
             }
         }
@@ -132,7 +153,7 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
 }
 
 @Composable
-private fun PortraitGrid(onClick: (color: Color) -> Unit) {
+private fun PortraitGrid(onClick: (color: Color) -> Unit, highlightedColor: Color?) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(defaultPadding / 2),
@@ -140,7 +161,10 @@ private fun PortraitGrid(onClick: (color: Color) -> Unit) {
         userScrollEnabled = false,
     ) {
         items(colorsList) { color ->
-            ColoredButton(buttonColor = color) {
+            ColoredButton(
+                buttonColor = color,
+                isHighlighted = color == highlightedColor
+            ) {
                 onClick(color)
             }
         }
@@ -148,7 +172,7 @@ private fun PortraitGrid(onClick: (color: Color) -> Unit) {
 }
 
 @Composable
-private fun LandscapeGrid(onClick: (color: Color) -> Unit) {
+private fun LandscapeGrid(onClick: (color: Color) -> Unit, highlightedColor: Color?) {
     LazyHorizontalGrid(
         rows = GridCells.Fixed(3),
         horizontalArrangement = Arrangement.spacedBy(defaultPadding / 2),
@@ -156,7 +180,10 @@ private fun LandscapeGrid(onClick: (color: Color) -> Unit) {
         userScrollEnabled = false,
     ) {
         items(colorsList) { color ->
-            ColoredButton(buttonColor = color) {
+            ColoredButton(
+                buttonColor = color,
+                isHighlighted = color == highlightedColor
+            ) {
                 onClick(color)
             }
         }
@@ -166,10 +193,13 @@ private fun LandscapeGrid(onClick: (color: Color) -> Unit) {
 //Text box and the 2 buttons under or right of grid
 @Composable
 private fun FunctionsArea(
-    onDelete: () -> Unit,
     onEndGame: () -> Unit,
+    onPause: () -> Unit,
+    onStart: () -> Unit,
     scrollState: ScrollState,
     text: String,
+    isGameStart: Boolean = false,
+    isOnPause: Boolean = false,
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -185,8 +215,11 @@ private fun FunctionsArea(
         )
 
         FunctionButtons(
-            onDelete = onDelete,
+            onPause = onPause,
             onEndGame = onEndGame,
+            onStart = onStart,
+            isOnPause = isOnPause,
+            isGameStart = isGameStart,
         )
     }
 }
