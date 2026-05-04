@@ -31,15 +31,23 @@ fun playSound(color: Color) {
 
         // Multiple harmonics to enrich the timbre
         val w = 2.0 * Math.PI * frequency
-        val sample = (
-                sin(w * time) * 1.0 +         // Fundamental
-                        sin(2.0 * w * time) * 0.4 +   // 2nd Harmonic
-                        sin(3.0 * w * time) * 0.2 +   // 3rd Harmonic
-                        sin(4.0 * w * time) * 0.1     // 4th Harmonic
-                ) * envelope
-
+        var sample: Double
+        if (frequency == 100.00) {
+            sample = if (sin(w * time) > 0) 0.6 else -0.6
+            sample += if (sin(w * 2.5 * time) > 0) 0.2 else -0.2
+            sample *= envelope
+        } else {
+            sample = (
+                    sin(w * time) * 1.0 +
+                            sin(2.0 * w * time) * 0.4 +
+                            sin(3.0 * w * time) * 0.2 +
+                            sin(4.0 * w * time) * 0.1
+                    ) * envelope
+        }
         // Normalize (1.0 + 0.4 + 0.2 + 0.1 = 1.7) and convert to 16-bit PCM
-        val pcmValue = (sample * Short.MAX_VALUE / 1.7).toInt().toShort()
+        val normalize = if (frequency == 100.00) 0.6 else 1.7
+        val pcmValue = (sample * Short.MAX_VALUE / normalize)
+            .toInt().toShort()
         sound[i * 2] = pcmValue     // Left channel
         sound[i * 2 + 1] = pcmValue // Right channel
     }
@@ -78,6 +86,6 @@ fun getFrequencyFromColor(color: Color): Double {
         colorsList[3] -> 587.33 // Re
         colorsList[4] -> 659.25 // Mi
         colorsList[5] -> 698.46 // Fa
-        else -> 0.0
+        else -> 100.0 // Frequenza bassa per indicare un errore
     }
 }
