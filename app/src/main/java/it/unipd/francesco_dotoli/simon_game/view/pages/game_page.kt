@@ -20,11 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,15 +33,9 @@ import it.unipd.francesco_dotoli.simon_game.R
 import it.unipd.francesco_dotoli.simon_game.colorsList
 import it.unipd.francesco_dotoli.simon_game.controller.GameController
 import it.unipd.francesco_dotoli.simon_game.controller.RoomViewModel
-import it.unipd.francesco_dotoli.simon_game.controller.playSound
 import it.unipd.francesco_dotoli.simon_game.defaultPadding
-import it.unipd.francesco_dotoli.simon_game.model.GameModel
 import it.unipd.francesco_dotoli.simon_game.view.components.ColoredButton
 import it.unipd.francesco_dotoli.simon_game.view.components.FunctionButtons
-import it.unipd.francesco_dotoli.simon_game.view.components.getLetterFromColor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,36 +46,29 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
         .padding(defaultPadding)
 
     val gameController: GameController = viewModel()
-    val coroutineScope = rememberCoroutineScope()
-    var text by rememberSaveable { mutableStateOf(sequencePlaceholder) }
 
     val coloredButtonOnClick = fun(color: Color) {
-        if (gameController.isBotPlaying || !gameController.isGameStart) return
-        gameController.highlightedColor = color
-        coroutineScope.launch(Dispatchers.IO) {
-            playSound(color)
-            delay(300)
-            gameController.highlightedColor = null
-        }
-        var newText = getLetterFromColor(color)
-        if (text == sequencePlaceholder) text = ""
-        else newText = ", $newText"
-        text += newText
+        gameController.onClick(
+            color = color,
+            onGameOver = { gameModel ->
+                roomViewModel.insert(gameModel)
+            },
+        )
     }
 
-    val onEndGame = {
-        var size = text.split(',').size
-        if (text == sequencePlaceholder) size = 0
-        roomViewModel.insert(
-            GameModel(
-                buttonsClicked = size,
-                correctSequence = if (text == sequencePlaceholder) "" else text,
-                uid = 0,
+    val onEndGame = fun() {
+        if (gameController.numButton < 2 && gameController.isBotPlaying) {
+            gameController.reset()
+        } else {
+            gameController.endGame(
+                callback = { gameModel ->
+                    roomViewModel.insert(gameModel)
+                }
             )
-        )
+        }
+
         navController.popBackStack()
-        text = sequencePlaceholder
-        gameController.reset()
+        gameController.text = ""
     }
 
     val onStart = {
@@ -100,7 +82,7 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
 
     // scroll text
     val scrollState = rememberScrollState()
-    LaunchedEffect(text) {
+    LaunchedEffect(Unit) {
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 
@@ -125,10 +107,11 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
                     onPause = onPause,
                     onEndGame = onEndGame,
                     scrollState = scrollState,
-                    text = text,
+                    text = gameController.text.ifEmpty { sequencePlaceholder },
                     onStart = onStart,
                     isOnPause = gameController.isOnPause,
                     isGameStart = gameController.isGameStart,
+                    isBotPlay = gameController.isBotPlaying,
                 )
             }
         } else {
@@ -142,10 +125,11 @@ fun GamePage(navController: NavController, roomViewModel: RoomViewModel) {
                     onPause = onPause,
                     onEndGame = onEndGame,
                     scrollState = scrollState,
-                    text = text,
+                    text = gameController.text.ifEmpty { sequencePlaceholder },
                     onStart = onStart,
                     isOnPause = gameController.isOnPause,
                     isGameStart = gameController.isGameStart,
+                    isBotPlay = gameController.isBotPlaying,
                 )
             }
         }
@@ -190,7 +174,7 @@ private fun LandscapeGrid(onClick: (color: Color) -> Unit, highlightedColor: Col
     }
 }
 
-//Text box and the 2 buttons under or right of grid
+//Text box and the 3 buttons under or right of grid
 @Composable
 private fun FunctionsArea(
     onEndGame: () -> Unit,
@@ -200,6 +184,7 @@ private fun FunctionsArea(
     text: String,
     isGameStart: Boolean = false,
     isOnPause: Boolean = false,
+    isBotPlay: Boolean,
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -220,6 +205,7 @@ private fun FunctionsArea(
             onStart = onStart,
             isOnPause = isOnPause,
             isGameStart = isGameStart,
+            isBotPlay = isBotPlay
         )
     }
 }
