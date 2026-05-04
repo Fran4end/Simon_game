@@ -20,6 +20,7 @@ fun FunctionButtons(
     onEndGame: () -> Unit,
     isGameStart: Boolean,
     isOnPause: Boolean,
+    isBotPlay: Boolean,
 ) {
     val endGameString = stringResource(R.string.end_game)
     val startString = stringResource(R.string.start)
@@ -44,7 +45,7 @@ fun FunctionButtons(
 
         Button(
             onClick = onPause,
-            enabled = isGameStart,
+            enabled = isGameStart && isBotPlay,
         ) {
             Text(
                 if (isOnPause) resumeString else pauseString,
@@ -53,6 +54,7 @@ fun FunctionButtons(
 
         Button(
             onClick = onEndGame,
+            enabled = isGameStart
         ) {
             Text(
                 endGameString,
