@@ -7,4 +7,5 @@ package it.unipd.francesco_dotoli.simon_game.view
 sealed class Routes(val route: String) {
     data object GamePage : Routes("GamePage")
     data object GameListPage : Routes("GameListPage")
+    data object DetailPage : Routes("DetailPage/{gameModel}")
 }

@@ -1,18 +1,24 @@
 package it.unipd.francesco_dotoli.simon_game.controller
 
-import androidx.lifecycle.LiveData
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import it.unipd.francesco_dotoli.simon_game.model.AppDatabase
 import it.unipd.francesco_dotoli.simon_game.model.GameModel
 
-class RoomViewModel(private val roomRepository: RoomRepository) : ViewModel() {
+class RoomViewModel(application: Application) : AndroidViewModel(application) {
+    private val roomRepository: RoomRepository
+    val allGames = MutableLiveData<List<GameModel>>()
 
-    private val _allGames = MutableLiveData<List<GameModel>>()
-    val savedGames: LiveData<List<GameModel>> get() = _allGames
+    init {
+        val roomDao = AppDatabase.getDatabase(application).roomDao()
+        roomRepository = RoomRepository(roomDao)
+        fetchAllGame()
+    }
 
     fun fetchAllGame() {
         roomRepository.getAllGames { games ->
-            _allGames.postValue(games)
+            allGames.postValue(games)
         }
     }
 

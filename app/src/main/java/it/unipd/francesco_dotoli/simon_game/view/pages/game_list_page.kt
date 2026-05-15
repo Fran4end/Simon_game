@@ -30,7 +30,7 @@ import it.unipd.francesco_dotoli.simon_game.view.components.SavedGameItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameListPage(navController: NavController, roomViewModel: RoomViewModel) {
-    val savedGames by roomViewModel.savedGames.observeAsState(initial = emptyList())
+    val savedGames by roomViewModel.allGames.observeAsState(initial = emptyList())
 
     LaunchedEffect(Unit) {
         roomViewModel.fetchAllGame()
