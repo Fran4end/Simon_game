@@ -57,18 +57,20 @@ fun DetailPage(gameModel: GameModel) {
                 },
             )
 
-            HorizontalDivider()
 
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(R.string.correct_sequence) + ":\n\n")
-                    }
+            if (!gameModel.correctSequence.isEmpty()) {
+                HorizontalDivider()
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(stringResource(R.string.correct_sequence) + ":\n\n")
+                        }
 
-                    append("${gameModel.correctSequence}\n")
-                },
-            )
+                        append("${gameModel.correctSequence}\n")
+                    },
+                )
+            }
 
             if (!gameModel.missSequence.isEmpty()) {
                 HorizontalDivider()

@@ -2,14 +2,13 @@ package it.unipd.francesco_dotoli.simon_game.view.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,18 +32,17 @@ fun SavedGameItem(game: GameModel, onClick: () -> Unit) {
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(defaultPadding)
                 .drawBehind {
                     drawLine(
                         color = Color.LightGray,
-                        Offset(0f, size.height + 10),
+                        Offset(0f, size.height + 20),
                         Offset(size.width, size.height),
                         4f,
                     )
                 },
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(defaultPadding),
         ) {
             Box(
                 modifier = Modifier.border(width = 2.dp, color = Color.Gray, shape = CircleShape),
@@ -52,15 +50,17 @@ fun SavedGameItem(game: GameModel, onClick: () -> Unit) {
             ) {
                 Text(
                     text = game.buttonsClicked.toString(),
-                    modifier = Modifier.padding(horizontal = defaultPadding / 2),
+                    modifier = Modifier.padding(horizontal = defaultPadding),
                 )
             }
 
+            VerticalDivider(thickness = 10.dp)
+
             Text(
                 buildAnnotatedString {
-                    append(game.correctSequence)
+                    append(game.correctSequence.trim())
 
-                    if (!game.missSequence.isEmpty())
+                    if (!game.missSequence.isEmpty() && !game.correctSequence.isEmpty())
                         append(", ")
                     withStyle(style = SpanStyle(color = Color.Red)) {
                         append(game.missSequence)
@@ -69,7 +69,6 @@ fun SavedGameItem(game: GameModel, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
-
         }
     }
 }
