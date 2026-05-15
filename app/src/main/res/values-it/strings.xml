@@ -11,4 +11,8 @@
     <string name="start">Avvia partita</string>
     <string name="pause">Pausa</string>
     <string name="resume">Riprendi</string>
+    <string name="buttons_clicked">Pulsanti schiacciati correttamente</string>
+    <string name="correct_sequence">Seguenza corretta</string>
+    <string name="missing_sequence">Seguenza mancante</string>
+    <string name="detail_title">Dettagli partita</string>
 </resources>

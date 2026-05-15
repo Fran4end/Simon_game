@@ -10,4 +10,8 @@
     <string name="start">start game</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
+    <string name="buttons_clicked">Correct buttons clicked</string>
+    <string name="correct_sequence">Correct sequence</string>
+    <string name="missing_sequence">Missing sequence</string>
+    <string name="detail_title">Game detail</string>
 </resources>

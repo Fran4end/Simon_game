@@ -1,10 +1,12 @@
 package it.unipd.francesco_dotoli.simon_game.view.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -23,43 +25,51 @@ import it.unipd.francesco_dotoli.simon_game.defaultPadding
 import it.unipd.francesco_dotoli.simon_game.model.GameModel
 
 @Composable
-fun SavedGameItem(game: GameModel) {
-    Row(
+fun SavedGameItem(game: GameModel, onClick: () -> Unit) {
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(defaultPadding)
-            .drawBehind {
-                drawLine(
-                    color = Color.LightGray,
-                    Offset(0f, size.height + 10),
-                    Offset(size.width, size.height),
-                    4f,
-                )
-            },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(defaultPadding),
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
     ) {
-        Box(
-            modifier = Modifier.border(width = 2.dp, color = Color.Gray, shape = CircleShape),
-            contentAlignment = Alignment.Center,
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(defaultPadding)
+                .drawBehind {
+                    drawLine(
+                        color = Color.LightGray,
+                        Offset(0f, size.height + 10),
+                        Offset(size.width, size.height),
+                        4f,
+                    )
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(defaultPadding),
         ) {
+            Box(
+                modifier = Modifier.border(width = 2.dp, color = Color.Gray, shape = CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = game.buttonsClicked.toString(),
+                    modifier = Modifier.padding(horizontal = defaultPadding / 2),
+                )
+            }
+
             Text(
-                text = game.buttonsClicked.toString(),
-                modifier = Modifier.padding(horizontal = defaultPadding / 2),
+                buildAnnotatedString {
+                    append(game.correctSequence)
+
+                    if (!game.missSequence.isEmpty())
+                        append(", ")
+                    withStyle(style = SpanStyle(color = Color.Red)) {
+                        append(game.missSequence)
+                    }
+                },
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
             )
+
         }
-
-        Text(
-            buildAnnotatedString {
-                append(game.correctSequence)
-
-                withStyle(style = SpanStyle(color = Color.Red)) {
-                    append(game.missSequence)
-                }
-            },
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-        )
-
     }
 }

@@ -1,5 +1,6 @@
 package it.unipd.francesco_dotoli.simon_game.view.pages
 
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -70,7 +71,17 @@ fun GameListPage(navController: NavController, roomViewModel: RoomViewModel) {
             modifier = Modifier.padding(innerPadding)
         ) {
             items(savedGames) { game ->
-                SavedGameItem(game)
+                SavedGameItem(
+                    game,
+                    onClick = {
+                        navController.navigate(
+                            Routes.DetailPage.route.replace(
+                                "{gameModel}",
+                                Uri.encode(game.toNavParam())
+                            )
+                        )
+                    },
+                )
             }
         }
     }
